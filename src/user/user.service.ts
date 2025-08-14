@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { In, Repository } from 'typeorm';
 import { User } from './create_user_entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create_user_dto';
@@ -18,10 +18,13 @@ export class UserService {
 
   async createUser(userDto: CreateUserDto): Promise<User> {
     const salt = await bcrypt.genSalt();
-    const role = await this.roleRepository.findOneBy({ id: userDto.role_id });
-    if (!role) {
+    const roles = await this.roleRepository.findBy({
+      id: In(userDto.role_ids),
+    });
+    if (!roles.length) {
       throw new Error('Role not found');
     }
+
     const hashedPassword = await bcrypt.hash(userDto.password, salt);
     const user = this.userRepository.create({
       firstName: userDto.firstName,
@@ -29,7 +32,7 @@ export class UserService {
       phoneNumber: userDto.phoneNumber,
       email: userDto.email,
       password: hashedPassword,
-      role,
+      role: roles,
     });
     const savedUser = await this.userRepository.save(user);
     return plainToInstance(User, savedUser);
@@ -38,7 +41,7 @@ export class UserService {
   async findOne(loginDto: LoginDto): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email: loginDto.email },
-      relations: ['role'], // <-- include role in query
+      relations: ['role'],
     });
     if (!user) {
       throw new NotFoundException('User not found');

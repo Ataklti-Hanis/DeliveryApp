@@ -28,7 +28,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   password: string;
 
-  @IsInt()
+  @IsInt({ each: true })
   @Type(() => Number)
-  role_id: number;
+  role_ids: number[];
 }
