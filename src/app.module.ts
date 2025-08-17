@@ -14,13 +14,12 @@ import { Role } from './roles/roles_entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'ate',
-      password: '0000',
+      url: 'postgresql://ate:sq7lgziKHOQKIbuNj0JMb5KQfnFzpfoT@dpg-d2h34sgdl3ps73ftbv2g-a.oregon-postgres.render.com/delivery_yplu',
       entities: [User, Role],
-      database: 'delivery_app',
-      synchronize: true,
+      synchronize: true, // ⚠️ only for dev/testing
+      ssl: {
+        rejectUnauthorized: false, // Render requires SSL
+      },
     }),
     UserModule,
     AuthModule,
@@ -32,13 +31,10 @@ import { Role } from './roles/roles_entity';
 export class AppModule implements NestModule {
   constructor(private dataSource: DataSource) {
     console.log('***************************************');
-    console.log(
-      '*************************',
-      dataSource.driver.database,
-      '*************************',
-    );
+    console.log('Connected to database:', this.dataSource.options.database);
     console.log('***************************************');
   }
+
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
