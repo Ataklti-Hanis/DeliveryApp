@@ -14,12 +14,19 @@ import { Role } from './roles/roles_entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: 'postgresql://ate:sq7lgziKHOQKIbuNj0JMb5KQfnFzpfoT@dpg-d2h34sgdl3ps73ftbv2g-a.oregon-postgres.render.com/delivery_yplu',
+      // url: 'postgresql://ate:sq7lgziKHOQKIbuNj0JMb5KQfnFzpfoT@dpg-d2h34sgdl3ps73ftbv2g-a.oregon-postgres.render.com/delivery_yplu',
+      // entities: [User, Role],
+      // synchronize: true, // ⚠️ only for dev/testing
+      // ssl: {
+      //   rejectUnauthorized: false, // Render requires SSL
+      // },
+      host: 'localhost',
+      port: 5432,
+      username: 'ate',
+      password: '0000',
+      database: 'delivery_app',
       entities: [User, Role],
-      synchronize: true, // ⚠️ only for dev/testing
-      ssl: {
-        rejectUnauthorized: false, // Render requires SSL
-      },
+      synchronize: true,
     }),
     UserModule,
     AuthModule,

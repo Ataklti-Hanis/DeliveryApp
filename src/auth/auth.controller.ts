@@ -21,6 +21,8 @@ export class AuthController {
   }
 
   @Post('signin')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiResponse({ status: 200, description: 'return access token in response' })
   signin(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
     return this.authService.signin(loginDto);
   }
